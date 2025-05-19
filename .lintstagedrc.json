@@ -1,0 +1,10 @@
+{
+  "*.{js,ts,tsx}": [
+    "prettier --write",
+    "eslint --fix"
+  ],
+  "!*.lock": "true",
+  "!pnpm-lock.yaml": "true",
+  "!package-lock.json": "true",
+  "!yarn.lock": "true"
+}

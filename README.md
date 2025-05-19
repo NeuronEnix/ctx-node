@@ -1,2 +1,48 @@
-# ctx-node
-Context node
+# Node Context (Ctx)
+Initial project setup for node
+
+# .gitignore
+- https://github.com/github/gitignore
+
+# .gitattributes
+- https://richienb.github.io/gitattributes-generator/
+- select `Common` and `Web`
+
+
+# .editorconfig
+- get it from `root dir` of this `repo`
+
+# Setup
+## New Project
+- First time setup
+```sh
+npm init
+npm install -g pnpm@latest-10
+
+# Things required to run
+pnpm add -D typescript ts-node @types/node
+pnpm add -D nodemon
+pnpm add tslib
+
+# Things required to format and linting
+pnpm add -D eslint @eslint/eslintrc @eslint/js @typescript-eslint/parser @typescript-eslint/eslint-plugin
+pnpm add -D prettier eslint-config-prettier eslint-plugin-prettier
+
+# Common modules
+pnpm add express ajv axios dotenv jsonwebtoken
+pnpm add @types/express @types/jsonwebtoken -D
+
+# Add husky
+pnpm add -D husky lint-staged
+pnpm exec husky init
+```
+
+- Pre commit
+```sh
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm lint-staged
+pnpm test
+```
+

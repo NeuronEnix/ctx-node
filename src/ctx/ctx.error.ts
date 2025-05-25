@@ -79,6 +79,12 @@ export namespace ctxErr {
         msg: "Access token expired",
         ...e,
       }),
+    invalidApiKey: (e?: TResErr) =>
+      new CtxError({
+        name: "INVALID_API_KEY",
+        msg: "Invalid api key",
+        ...e,
+      }),
   };
 
   export const user = {

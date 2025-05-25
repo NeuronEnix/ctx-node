@@ -4,7 +4,7 @@ import express, {
   Request,
   Response,
 } from "express";
-import { CONFIG } from "../ctx/ctx.config";
+import { CONFIG } from "../config/config";
 import { ctxRouter } from "../ctx/ctx.router";
 import { ctxErr } from "../ctx/ctx.error";
 import { TCtx, USER_ROLE } from "../ctx/ctx.types";
@@ -138,7 +138,7 @@ function getCtxRequest(req: Request): TCtx["req"] {
 function getCtxUser(ctxReq: TCtx["req"]): TCtx["user"] {
   return {
     id: "none",
-    role: USER_ROLE.none,
+    role: USER_ROLE.NONE,
     seq: ctxReq.header.clientInfo.seq,
     sessionId: ctxReq.header.clientInfo.sessionId,
     deviceId: ctxReq.header.clientInfo.deviceId,

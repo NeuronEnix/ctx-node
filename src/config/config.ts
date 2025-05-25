@@ -20,6 +20,7 @@ const SECRET = {
     REFRESH_TOKEN:
       process.env.JWT_REFRESH_TOKEN_SECRET || "refresh-token-secret",
   },
+  API_KEY: process.env.API_KEY || "svc_api_key",
 };
 
 const DB = {

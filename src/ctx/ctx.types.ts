@@ -1,8 +1,8 @@
 export const USER_ROLE = {
-  user: "user",
-  admin: "admin",
-  server: "server",
-  none: "none",
+  USER: "USER",
+  ADMIN: "ADMIN",
+  SERVER: "SERVER",
+  NONE: "NONE",
 } as const;
 
 type CtxReq = {

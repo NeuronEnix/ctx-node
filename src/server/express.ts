@@ -111,13 +111,13 @@ function getCtxHeader(req: Request): TCtx["req"]["header"] {
   return {
     auth: String(req.headers.authorization) || "none",
     clientInfo: {
-      seq: isNaN(Number(req.headers["x-jumbo-seq"]))
+      seq: isNaN(Number(req.headers["x-ctx-seq"]))
         ? 0
-        : Number(req.headers["x-jumbo-seq"]),
-      sessionId: String(req.headers["x-jumbo-session-id"]) || "none",
-      deviceId: String(req.headers["x-jumbo-device-id"]) || "none",
-      deviceName: String(req.headers["x-jumbo-device-name"]) || "none",
-      appVersion: String(req.headers["x-jumbo-app-version"]) || "none",
+        : Number(req.headers["x-ctx-seq"]),
+      sessionId: String(req.headers["x-ctx-session-id"]) || "none",
+      deviceId: String(req.headers["x-ctx-device-id"]) || "none",
+      deviceName: String(req.headers["x-ctx-device-name"]) || "none",
+      appVersion: String(req.headers["x-ctx-app-version"]) || "none",
       userAgent: String(req.headers["user-agent"]) || "none",
     },
   };

@@ -1,11 +1,11 @@
 import { AxiosError } from "axios";
 
 import { ctxErr, CtxError } from "./ctx.error";
-import { TCtx } from "./ctx.types";
+import { Ctx } from "./ctx";
 
 import * as api from "../api/index";
 
-export async function ctxRouter(ctx: TCtx): Promise<TCtx> {
+export async function ctxRouter(ctx: Ctx): Promise<Ctx> {
   try {
     const reqPath = `${ctx.req.method} ${ctx.req.path}`;
     console.log(
@@ -70,9 +70,5 @@ export async function ctxRouter(ctx: TCtx): Promise<TCtx> {
       data: {},
     };
     return ctx;
-  } finally {
-    ctx.meta.monitor.ts.out = new Date();
-    ctx.meta.monitor.ts.execTime =
-      ctx.meta.monitor.ts.out.getTime() - ctx.meta.monitor.ts.in.getTime();
   }
 }

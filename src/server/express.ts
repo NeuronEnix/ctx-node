@@ -7,9 +7,8 @@ import express, {
 import { CONFIG } from "../config/config";
 import { ctxRouter } from "../ctx/ctx.router";
 import { ctxErr } from "../ctx/ctx.error";
-import { TCtx, USER_ROLE } from "../ctx/ctx.types";
-
-const INSTANCE = CONFIG.INSTANCE;
+import { CtxHeader } from "../ctx/ctx.types";
+import { Ctx } from "../ctx/ctx";
 
 const app = express();
 
@@ -19,7 +18,7 @@ function getPath(url: string): string {
   return url.substring(0, queryParamPos);
 }
 
-function getHttpCode(ctx: TCtx) {
+function getHttpCode(ctx: Ctx) {
   if (typeof ctx.res?.code !== "string") return 500;
   switch (ctx.res.code) {
     case "OK":
@@ -41,25 +40,19 @@ app.all("/{*any}", async (req: Request, res: Response) => {
     return;
   }
 
-  const ctxMeta: TCtx["meta"] = getCtxMeta();
-  const ctxReq: TCtx["req"] = getCtxRequest(req);
-  const ctxUser: TCtx["user"] = getCtxUser(ctxReq);
-  const ctxRes: TCtx["res"] = getCtxRes();
-  const ctx: TCtx = {
-    id: ctxMeta.monitor.traceId,
-    meta: ctxMeta,
-    req: ctxReq,
-    user: ctxUser,
-    res: ctxRes,
-  };
+  const ctx = new Ctx({
+    method: req.method,
+    path: getPath(req.url),
+    header: getCtxHeader(req),
+    headerRaw: req.headers,
+    data: req.method === "POST" ? req.body || {} : req.query || {},
+    ip: req.ip || "",
+    ips: req.ips || [],
+  });
 
   await ctxRouter(ctx);
-  setCtxResMeta(ctx);
+  ctx.done();
   res.type("application/json").status(getHttpCode(ctx)).send(ctx.res);
-
-  // decrease the number of request inflight when response of this request goes out
-  INSTANCE.INFLIGHT--;
-
   return;
 });
 
@@ -107,7 +100,7 @@ process.on("unhandledRejection", (reason, promise) => {
   console.error("UNHANDLED_REJECTION:", promise, "reason:", reason);
 });
 
-function getCtxHeader(req: Request): TCtx["req"]["header"] {
+function getCtxHeader(req: Request): CtxHeader {
   return {
     auth: String(req.headers.authorization) || "none",
     clientInfo: {
@@ -121,79 +114,4 @@ function getCtxHeader(req: Request): TCtx["req"]["header"] {
       userAgent: String(req.headers["user-agent"]) || "none",
     },
   };
-}
-
-function getCtxRequest(req: Request): TCtx["req"] {
-  return {
-    method: req.method,
-    path: getPath(req.url),
-    header: getCtxHeader(req),
-    headerRaw: req.headers,
-    data: req.method === "POST" ? req.body || {} : req.query || {},
-    ip: req.ip || "",
-    ips: req.ips || [],
-  };
-}
-
-function getCtxUser(ctxReq: TCtx["req"]): TCtx["user"] {
-  return {
-    id: "none",
-    role: USER_ROLE.NONE,
-    seq: ctxReq.header.clientInfo.seq,
-    sessionId: ctxReq.header.clientInfo.sessionId,
-    deviceId: ctxReq.header.clientInfo.deviceId,
-    deviceName: ctxReq.header.clientInfo.deviceName,
-    appVersion: ctxReq.header.clientInfo.appVersion,
-    token: {
-      access: "none",
-      refresh: "none",
-    },
-  };
-}
-
-function getCtxMeta(): TCtx["meta"] {
-  const curTime = new Date();
-  const curSeq = ++INSTANCE.SEQ; // lifetime request sequence number
-  const curInflight = ++INSTANCE.INFLIGHT; // number of request inflight when this request came in
-  const curTraceId = `${INSTANCE.ID}-${curSeq}`; // trace id
-  const curSpanId = `${INSTANCE.ID}-${curSeq}`; // span id
-
-  return {
-    serviceName: INSTANCE.SERVICE_NAME,
-    instance: {
-      id: INSTANCE.ID,
-      createdAt: INSTANCE.CREATED_AT,
-      seq: curSeq,
-      inflight: curInflight,
-    },
-    monitor: {
-      traceId: curTraceId,
-      spanId: curSpanId,
-      stdout: [],
-      dbLog: [],
-      ts: {
-        in: curTime,
-      },
-    },
-  };
-}
-
-function getCtxRes(): TCtx["res"] {
-  return {
-    code: "OK",
-    msg: "OK",
-    data: {},
-  };
-}
-
-function setCtxResMeta(ctx: TCtx): TCtx {
-  ctx.res.meta = {
-    ctxId: ctx.id,
-    traceId: ctx.meta.monitor.traceId,
-    spanId: ctx.meta.monitor.spanId,
-    inTime: ctx.meta.monitor.ts.in,
-    outTime: ctx.meta.monitor.ts.out!,
-    execTime: ctx.meta.monitor.ts.execTime!,
-  };
-  return ctx;
 }

@@ -1,23 +1,20 @@
-export const USER_ROLE = {
-  USER: "USER",
-  ADMIN: "ADMIN",
-  SERVER: "SERVER",
-  NONE: "NONE",
-} as const;
+import { USER_ROLE } from "./ctx";
 
-type CtxReq = {
-  header: {
-    auth: string;
-    apiKey?: string;
-    clientInfo: {
-      seq: number;
-      sessionId: string;
-      deviceId: string;
-      deviceName: string;
-      appVersion: string;
-      userAgent: string;
-    };
+export type CtxHeader = {
+  auth: string;
+  apiKey?: string;
+  clientInfo: {
+    seq: number;
+    sessionId: string;
+    deviceId: string;
+    deviceName: string;
+    appVersion: string;
+    userAgent: string;
   };
+};
+
+export type CtxReq = {
+  header: CtxHeader;
   headerRaw: Record<string, string | string[] | undefined>;
   method: string;
   path: string;
@@ -29,7 +26,7 @@ type CtxReq = {
   ips: string[];
 };
 
-type CtxRes = {
+export type CtxRes = {
   code: string;
   msg: string;
   data: { [key: string]: unknown };
@@ -43,7 +40,7 @@ type CtxRes = {
   };
 };
 
-type CtxMeta = {
+export type CtxMeta = {
   serviceName: string;
   instance: {
     id: string;
@@ -64,7 +61,7 @@ type CtxMeta = {
   };
 };
 
-type CtxUser = {
+export type CtxUser = {
   id: string;
   role: keyof typeof USER_ROLE;
   seq: number;
@@ -77,17 +74,3 @@ type CtxUser = {
     refresh: string;
   };
 };
-
-export type TCtx = {
-  id: string;
-  meta: CtxMeta;
-  req: CtxReq;
-  res: CtxRes;
-  user: CtxUser;
-};
-
-export interface IBaseApi {
-  auth(ctx: TCtx): Promise<TCtx>;
-  validate(ctx: TCtx): Promise<TCtx>;
-  handle(ctx: TCtx): Promise<TCtx>;
-}

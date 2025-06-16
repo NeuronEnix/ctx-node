@@ -4,7 +4,7 @@ type TAggConfig<T> = {
   flushHandler: (buff: T[]) => Promise<void>;
 };
 
-export class BaseAgg<T> {
+export class Agg<T> {
   private _buff: T[];
   private _maxSize: number;
   private _flushIntervalInSec: number;

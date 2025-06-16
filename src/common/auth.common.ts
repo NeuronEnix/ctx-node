@@ -1,7 +1,7 @@
-import { CONFIG } from "../config/config";
+import { CONFIG } from "../config/env.config";
 import jwt from "jsonwebtoken";
 import { ctxErr } from "../ctx/ctx.error";
-import { Ctx, USER_ROLE } from "../ctx/ctx";
+import { TCtx, USER_ROLE } from "../ctx/ctx.types";
 
 type TTokenPayload = {
   userId: string;
@@ -9,7 +9,7 @@ type TTokenPayload = {
 };
 
 class Auth {
-  verifyApiKey(ctx: Ctx): Ctx {
+  verifyApiKey(ctx: TCtx): TCtx {
     const apiKey = ctx.req.header.auth;
 
     if (apiKey !== CONFIG.SECRET.API_KEY)
@@ -20,7 +20,7 @@ class Auth {
     return ctx;
   }
 
-  verifyBearerToken(ctx: Ctx): Ctx {
+  verifyBearerToken(ctx: TCtx): TCtx {
     const authToken = ctx.req.header.auth;
     if (typeof authToken !== "string") throw ctxErr.auth.invalidAccessToken();
     const accessToken = authToken.replace("Bearer ", "");
@@ -42,7 +42,7 @@ class Auth {
     return ctx;
   }
 
-  async verifyAuth(ctx: Ctx): Promise<Ctx> {
+  async verifyAuth(ctx: TCtx): Promise<TCtx> {
     const authToken = ctx.req.header.auth;
     if (typeof authToken !== "string") throw ctxErr.auth.invalidAccessToken();
 
@@ -56,7 +56,7 @@ class Auth {
     return ctx;
   }
 
-  restrictUserByUserId(ctx: Ctx, userId: string) {
+  restrictUserByUserId(ctx: TCtx, userId: string) {
     switch (ctx.user.role) {
       case USER_ROLE.USER: {
         if (ctx.user.id !== userId) throw ctxErr.auth.notAuthorized();

@@ -4,11 +4,11 @@ import express, {
   Request,
   Response,
 } from "express";
-import { CONFIG } from "../config/config";
+import { CONFIG } from "../config/env.config";
 import { ctxRouter } from "../ctx/ctx.router";
 import { ctxErr } from "../ctx/ctx.error";
-import { CtxHeader } from "../ctx/ctx.types";
-import { Ctx } from "../ctx/ctx";
+import { TCtx } from "../ctx/ctx.types";
+import { buildCtx, doneCtx } from "../ctx/ctx";
 
 const app = express();
 
@@ -18,7 +18,7 @@ function getPath(url: string): string {
   return url.substring(0, queryParamPos);
 }
 
-function getHttpCode(ctx: Ctx) {
+function getHttpCode(ctx: TCtx) {
   if (typeof ctx.res?.code !== "string") return 500;
   switch (ctx.res.code) {
     case "OK":
@@ -30,7 +30,6 @@ function getHttpCode(ctx: Ctx) {
   }
 }
 
-// app.use('/public', express.static(path.join(__dirname, '..', '/ui')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -39,21 +38,16 @@ app.all("/{*any}", async (req: Request, res: Response) => {
     res.sendStatus(404);
     return;
   }
-
-  const ctx = new Ctx({
+  const ctx: TCtx = buildCtx({
     method: req.method,
     path: getPath(req.url),
-    header: getCtxHeader(req),
-    headerRaw: req.headers,
+    header: req.headers,
     data: req.method === "POST" ? req.body || {} : req.query || {},
     ip: req.ip || "",
     ips: req.ips || [],
   });
-
-  await ctxRouter(ctx);
-  ctx.done();
+  await ctxRouter(ctx).then(doneCtx);
   res.type("application/json").status(getHttpCode(ctx)).send(ctx.res);
-  return;
 });
 
 app.use(
@@ -99,19 +93,3 @@ process.on("uncaughtException", (err) => {
 process.on("unhandledRejection", (reason, promise) => {
   console.error("UNHANDLED_REJECTION:", promise, "reason:", reason);
 });
-
-function getCtxHeader(req: Request): CtxHeader {
-  return {
-    auth: String(req.headers.authorization) || "none",
-    clientInfo: {
-      seq: isNaN(Number(req.headers["x-ctx-seq"]))
-        ? 0
-        : Number(req.headers["x-ctx-seq"]),
-      sessionId: String(req.headers["x-ctx-session-id"]) || "none",
-      deviceId: String(req.headers["x-ctx-device-id"]) || "none",
-      deviceName: String(req.headers["x-ctx-device-name"]) || "none",
-      appVersion: String(req.headers["x-ctx-app-version"]) || "none",
-      userAgent: String(req.headers["user-agent"]) || "none",
-    },
-  };
-}

@@ -1,21 +1,23 @@
-import { USER_ROLE } from "./ctx";
+export const USER_ROLE = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+  SERVER: "SERVER",
+  NONE: "NONE",
+} as const;
 
-export type CtxHeader = {
-  auth: string;
-  apiKey?: string;
-  clientInfo: {
-    seq: number;
-    sessionId: string;
-    deviceId: string;
-    deviceName: string;
-    appVersion: string;
-    userAgent: string;
+type CtxReq = {
+  header: {
+    authorization?: string;
+    "x-ctx-device-name"?: string;
+    "x-ctx-device-id"?: string;
+    "x-ctx-os"?: string;
+    "x-ctx-app-version"?: string;
+    "x-ctx-session-id"?: string;
+    "x-ctx-seq"?: string;
+    "x-ctx-api-version"?: string;
+    "x-ctx-refresh-token"?: string;
+    [key: string]: string | string[] | undefined;
   };
-};
-
-export type CtxReq = {
-  header: CtxHeader;
-  headerRaw: Record<string, string | string[] | undefined>;
   method: string;
   path: string;
   data: {
@@ -26,21 +28,23 @@ export type CtxReq = {
   ips: string[];
 };
 
-export type CtxRes = {
+type CtxRes = {
   code: string;
   msg: string;
   data: { [key: string]: unknown };
   meta?: {
     ctxId: string;
+    seq: number;
     traceId: string;
     spanId: string;
     inTime: Date;
-    outTime?: Date;
-    execTime?: number;
+    outTime: Date;
+    execTime: number;
+    owd: number;
   };
 };
 
-export type CtxMeta = {
+type CtxMeta = {
   serviceName: string;
   instance: {
     id: string;
@@ -48,29 +52,47 @@ export type CtxMeta = {
     seq: number;
     inflight: number; // number of request inflight when this request came in
   };
+  ts: {
+    in: Date;
+    clientIn: Date;
+    owd: number;
+    out?: Date;
+    execTime?: number;
+  };
   monitor: {
     traceId: string;
     spanId: string;
     stdout: string[];
     dbLog: string[];
-    ts: {
-      in: Date; // request in time
-      out?: Date; // request out time
-      execTime?: number; // total execution time
-    };
   };
 };
 
-export type CtxUser = {
+type CtxUser = {
   id: string;
   role: keyof typeof USER_ROLE;
-  seq: number;
-  sessionId: string;
   deviceName: string;
   deviceId: string;
+  os: string;
   appVersion: string;
-  token: {
-    access: string;
+  sessionId: string;
+  seq: number;
+  apiVersion: string;
+  auth: {
+    token: string;
     refresh: string;
   };
 };
+
+export type TCtx = {
+  id: string;
+  meta: CtxMeta;
+  req: CtxReq;
+  res: CtxRes;
+  user: CtxUser;
+};
+
+export interface IBaseApi {
+  auth(ctx: TCtx): Promise<TCtx>;
+  validate(ctx: TCtx): Promise<TCtx>;
+  handle(ctx: TCtx): Promise<TCtx>;
+}

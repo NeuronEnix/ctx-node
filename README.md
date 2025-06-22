@@ -1,20 +1,26 @@
 # Node Context (Ctx)
+
 Initial project setup for node
 
 # .gitignore
+
 - https://github.com/github/gitignore
 
 # .gitattributes
+
 - https://richienb.github.io/gitattributes-generator/
 - select `Common` and `Web`
 
-
 # .editorconfig
+
 - get it from `root dir` of this `repo`
 
 # Setup
+
 ## New Project
+
 - First time setup
+
 ```sh
 npm init
 npm install -g pnpm@latest-10
@@ -38,11 +44,22 @@ pnpm exec husky init
 ```
 
 - Pre commit
+
 ```sh
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 pnpm lint-staged
-pnpm test
 ```
 
+# Docker build
+
+```sh
+docker compose build; docker compose down; docker compose up -d; docker logs --follow ctx-node-dev
+docker compose build; docker compose down; docker compose up -d; docker logs --follow ctx-node-test
+sudo docker compose build; sudo docker compose down; sudo docker compose up -d; sudo docker logs --follow ctx-node-prod
+```
+
+```sh
+sudo docker logs --tail 0 --follow ctx-node-prod
+```

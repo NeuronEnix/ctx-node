@@ -1,0 +1,22 @@
+name: "ctx-node-${NODE_ENV}"
+
+networks:
+  net:
+    name: dev
+    external: true
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ctx-node:${NODE_ENV}
+    container_name: ctx-node-${NODE_ENV}
+    restart: unless-stopped
+    command: node dist/cron/cron.js
+    networks:
+      - net
+    # ports:
+    #   - 3000:3000
+    env_file:
+      - .env

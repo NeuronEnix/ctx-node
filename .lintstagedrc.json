@@ -1,10 +1,7 @@
 {
   "*.{js,ts,tsx}": [
-    "prettier --write",
-    "eslint --fix"
+    "prettier --write --cache",
+    "eslint --fix --max-warnings=0 --cache"
   ],
-  "!*.lock": "true",
-  "!pnpm-lock.yaml": "true",
-  "!package-lock.json": "true",
-  "!yarn.lock": "true"
+  "*.{json,md,yaml,yml}": ["prettier --write --cache"]
 }

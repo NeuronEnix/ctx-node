@@ -5,12 +5,16 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon",
+    "dev": "nodemon --config nodemon.json",
+    "cron": "nodemon --config nodemon.cron.json",
     "format": "prettier --write src",
+    "format:staged": "lint-staged --config .lintstagedrc.json --allow-empty",
     "lint": "eslint --fix src",
-    "lint-staged": "lint-staged",
+    "lint:staged": "lint-staged --config .lintstagedrc.json --allow-empty",
+    "lint-staged": "lint-staged --allow-empty",
     "prepare": "husky",
-    "test": "echo \"No tests so far\" && exit 0"
+    "test": "echo \"No tests so far\" && exit 0",
+    "migrate": "ts-node -r dotenv/config src/migrate/index.ts"
   },
   "repository": {
     "type": "git",

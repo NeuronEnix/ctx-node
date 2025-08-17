@@ -5,10 +5,9 @@ import express, {
   Response,
 } from "express";
 import { CONFIG } from "../config/env.config";
-import { ctxRouter } from "../ctx/ctx.router";
 import { ctxErr } from "../ctx/ctx.error";
-import { TCtx } from "../ctx/ctx.types";
-import { buildCtx, doneCtx } from "../ctx/ctx";
+import { toCtx, TCtx } from "ctx-router";
+import { router } from "../router";
 
 const app = express();
 
@@ -38,15 +37,8 @@ app.all("/{*any}", async (req: Request, res: Response) => {
     res.sendStatus(404);
     return;
   }
-  const ctx: TCtx = buildCtx({
-    method: req.method,
-    path: getPath(req.url),
-    header: req.headers,
-    data: req.method === "POST" ? req.body || {} : req.query || {},
-    ip: req.ip || "",
-    ips: req.ips || [],
-  });
-  await ctxRouter(ctx).then(doneCtx);
+  const ctx: TCtx = toCtx.fromExpress(req);
+  await router.exec(req.method, getPath(req.url), ctx);
   res.type("application/json").status(getHttpCode(ctx)).send(ctx.res);
 });
 

@@ -1,4 +1,5 @@
 import { ErrorObject } from "ajv";
+import { CtxError } from "ctx-router";
 
 type TCtxErrorData = {
   [key: string]: number | string | object | boolean | null;
@@ -10,16 +11,6 @@ type TCtxError = {
   info?: unknown;
   cause?: unknown;
 };
-export class CtxError extends Error {
-  data: { [key: string]: number | string | object | boolean | null };
-  info?: unknown;
-  constructor({ name, msg, data, info }: TCtxError) {
-    super(msg);
-    super.name = name;
-    this.data = data || {};
-    this.info = info;
-  }
-}
 
 type TResErr = Partial<Pick<TCtxError, "data" | "info" | "msg">>;
 

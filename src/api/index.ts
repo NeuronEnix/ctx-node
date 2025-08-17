@@ -1,2 +1,2 @@
-export * as hello from "./hello";
-export * as ping from "./ping";
+export * as user from "./user";
+export * as health from "./health";

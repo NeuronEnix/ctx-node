@@ -14,8 +14,8 @@ importers:
         specifier: ^1.9.0
         version: 1.9.0
       ctx-router:
-        specifier: 1.0.2
-        version: 1.0.2
+        specifier: 1.0.3
+        version: 1.0.3
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
@@ -707,10 +707,10 @@ packages:
       }
     engines: { node: ">= 8" }
 
-  ctx-router@1.0.2:
+  ctx-router@1.0.3:
     resolution:
       {
-        integrity: sha512-Czq4PCkqQrKSRmeJGy2qVxn9v/4VHq4UCOzJREFrMe9HLO6f70akKHvXqhgUWq3fsP/PWPSILd7lqOPRu3TXyQ==,
+        integrity: sha512-VA8CdhEvolNtNl/shn9hXcTnPFMNzzmt34ZEBIQklUPfouShIul/z/bLI6ThFmXsH4EO+0DovpPsbgFUH7M9TQ==,
       }
 
   debug@4.4.1:
@@ -2526,7 +2526,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  ctx-router@1.0.2:
+  ctx-router@1.0.3:
     dependencies:
       tslib: 2.8.1
 

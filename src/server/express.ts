@@ -11,12 +11,6 @@ import { router } from "../router";
 
 const app = express();
 
-function getPath(url: string): string {
-  const queryParamPos = url.indexOf("?");
-  if (queryParamPos === -1) return url;
-  return url.substring(0, queryParamPos);
-}
-
 function getHttpCode(ctx: TCtx) {
   if (typeof ctx.res?.code !== "string") return 500;
   switch (ctx.res.code) {
@@ -38,7 +32,7 @@ app.all("/{*any}", async (req: Request, res: Response) => {
     return;
   }
   const ctx: TCtx = toCtx.fromExpress(req);
-  await router.exec(req.method, getPath(req.url), ctx);
+  await router.exec(ctx);
   res.type("application/json").status(getHttpCode(ctx)).send(ctx.res);
 });
 

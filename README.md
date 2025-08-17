@@ -49,6 +49,13 @@ pnpm exec husky init
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+pnpm build
+BUILD_STATUS=$?
+if [ $BUILD_STATUS -ne 0 ]; then
+  echo "Build failed. Commit aborted."
+  exit 1
+fi
+
 pnpm lint-staged
 ```
 

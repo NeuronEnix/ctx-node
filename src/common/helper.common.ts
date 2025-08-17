@@ -1,7 +1,7 @@
 import { ValidateFunction } from "ajv";
 
 import { ctxErr } from "../ctx/ctx.error";
-import { TCtx } from "../ctx/ctx.types";
+import { TCtx } from "ctx-router";
 
 export function validateRequestData(
   ctx: TCtx,

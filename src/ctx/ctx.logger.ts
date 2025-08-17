@@ -1,5 +1,5 @@
 import { CONFIG } from "../config/env.config";
-import { TCtx } from "./ctx.types";
+import { TCtx } from "ctx-router";
 
 export const logCtx = async (ctx: TCtx): Promise<TCtx> => {
   try {

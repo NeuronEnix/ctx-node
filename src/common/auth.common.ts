@@ -1,7 +1,7 @@
 import { CONFIG } from "../config/env.config";
 import jwt from "jsonwebtoken";
 import { ctxErr } from "../ctx/ctx.error";
-import { TCtx, USER_ROLE } from "../ctx/ctx.types";
+import { TCtx, USER_ROLE } from "ctx-router";
 
 type TTokenPayload = {
   userId: string;
@@ -16,7 +16,7 @@ class Auth {
       throw ctxErr.auth.invalidApiKey({ info: { apiKey } });
 
     ctx.user.id = "server_user_id";
-    ctx.user.role = USER_ROLE.SERVER;
+    ctx.user.role = USER_ROLE.server;
     return ctx;
   }
 
@@ -58,13 +58,13 @@ class Auth {
 
   restrictUserByUserId(ctx: TCtx, userId: string) {
     switch (ctx.user.role) {
-      case USER_ROLE.USER: {
+      case USER_ROLE.user: {
         if (ctx.user.id !== userId) throw ctxErr.auth.notAuthorized();
         break;
       }
-      case USER_ROLE.ADMIN:
+      case USER_ROLE.admin:
         break;
-      case USER_ROLE.SERVER:
+      case USER_ROLE.server:
         break;
       default:
         throw ctxErr.auth.notAuthorized();

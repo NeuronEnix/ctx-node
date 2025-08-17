@@ -1,12 +1,12 @@
 import { ValidateFunction } from "ajv";
 
 import { ctxErr } from "../ctx/ctx.error";
-import { Ctx } from "../ctx/ctx";
+import { TCtx } from "../ctx/ctx.types";
 
 export function validateRequestData(
-  ctx: Ctx,
+  ctx: TCtx,
   ajvValidator: ValidateFunction
-): Ctx {
+): TCtx {
   const dataValidated = ajvValidator(ctx.req.data);
   if (!dataValidated) {
     // type guard to satisfy typescript, but should never happen
